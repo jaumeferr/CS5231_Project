@@ -8,3 +8,6 @@ Samurai Tales Series:
 	- Middlename scanf admits 5 more bytes (total = 30) than the legal player->middlename size (25)
 
 possible upgrades --> increase difficulty to the god_mode function call
+
+
+
