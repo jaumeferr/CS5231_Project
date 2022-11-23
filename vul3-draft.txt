@@ -1,13 +1,9 @@
-Samurai Tales Series:
-
-#### CHALLENGE 1 ####
+9#### CHALLENGE 1 ####
 0- goal -> call god_mode()
 1- set player action with &god_mode()
 2- player-->fullname can be overflowed when the game loads a HERO from the hof.txt instead of creating a new player
 3- A middlename can be added to the fullname when the player wins, the fullname = name + middlename will be loaded in the hof.txt file
 	- Middlename scanf admits 5 more bytes (total = 30) than the legal player->middlename size (25)
-
-possible upgrades --> increase difficulty to the god_mode function call
 
 
 
