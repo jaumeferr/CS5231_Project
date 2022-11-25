@@ -4,9 +4,10 @@
 #include <string.h>
 #include <time.h>
 
+
 #define CANARY 0xa1e7b763
 
-// Compiled with gcc -m32 -ggdb -fno-stack-protector -mpreferred-stack-boundary=2 -mstack-protector-guard=global -L/usr/lib32 vul.c -o challenge
+// Compiled with gcc -ggdb -fno-stack-protector -mpreferred-stack-boundary=3 -mstack-protector-guard=global -L/usr/lib32 vul3.c -o challenge
 
 //---------------------------//
 // Player and Npc structures //
@@ -22,50 +23,44 @@ typedef struct player{
 } player_t;
 
 //----------------//
-// Admin function //
-//----------------//
-
-void god_mode() {
-	system("/bin/sh");
-}
-
-//----------------//
 // Util function  //
 //----------------//
-void set_middlename(char * middlename, player_t * character){
-    char concatenation[strlen(character->name) + strlen(middlename)];
+char * set_middlename(char * middlename, player_t * my_player){
+    char * concatenation = malloc((strlen(my_player->name) + strlen(middlename)) * sizeof(char));
     char * res;
-    printf("middlename size is %ld\n", strlen(middlename));
-    res = strncpy(concatenation, character->name, sizeof(character->name));
+    printf("[INFO] Name to be concatenated: %s -> size: %d\n", my_player->name, strlen(my_player->name));
+    printf("[INFO] Middlename to be added: %s -> size: %d\n", middlename, strlen(middlename));
+
+    res = strncpy(concatenation, my_player->name, sizeof(my_player->name));
     res = strncat(concatenation, ", ", 2);
     res = strncat(concatenation, middlename, strlen(middlename));
-    res = strncat(concatenation, "\n", 1);
-    res = strncpy(character->fullname, concatenation, strlen(concatenation));
-    printf("char->fullname size is now %ld\n", strlen(character->fullname));
+    //res = strncat(concatenation, "\n", 1);
+    printf("[INFO] Concatenation is now %s with size %d\n", concatenation, strlen(concatenation));
+    return concatenation;
 }
 
 //-----------------------------------//
-//    CHARACTER CONFIG  functions    //
+//    my_player CONFIG  functions    //
 //-----------------------------------//
 
 void show_hof(){ // MODIFY GETLINE, CHECK FIELD MEANING BC ITS NOT CORRECT
     //Show hall of fame data
     FILE *fp = fopen("hof.txt", "r");
-    char line = "";
+    char *line;
     size_t line_size;
     int r = 0;
     
     //Print hero fullname
-    if (r = getline(&line, &line_size, fp) != -1){
+    if (r = getline(line, &line_size, fp) != -1){
         printf("%s", line);
     } else{
-        printf("Error showing hero name");
+        printf("[ERROR] Error showing hero name");
     }
     //Print hero max score
     if (r = getline(&line, &line_size, fp) != -1){
         printf("%s", line);
     } else{
-        printf("Error showing hero score");
+        printf("[ERROR] Error showing hero score");
     }
 
     fclose(fp);
@@ -74,97 +69,85 @@ void show_hof(){ // MODIFY GETLINE, CHECK FIELD MEANING BC ITS NOT CORRECT
     }
 }
 
-void add_to_hof(player_t * character){
-    char m_name[30]; //Player's middlename size is actually 25
-    size_t m_size = 30;
+void add_to_hof(player_t * my_player){
+    char * buffer = malloc(30 *sizeof(char));
+    rewind(stdout);
 
-    printf("Congratulations! You have achieved the maximum score, you're a legend! \nPlease choose a new middlename so you will be remember as it:");
-    
-    //Check validity of new middlename
-    int valid = -1;
-    while(valid==-1){
-        scanf("%s", m_name);
-        getchar();
-        if(sizeof(m_name)<=m_size){
-            set_middlename(m_name, character);
-            valid = 1;
-            printf("A new middlename has been set.");
-        } else{
-            printf("We're sorry, the middlename you chose is not valid. Please choose a new middlename:");
-        }
+    printf("Congratulations! You have achieved the maximum score, you're a legend!\n");
+    printf("Please choose a new middlename\n");  
+    scanf("%s",buffer);
+    getchar();
+
+    //Remove outdated hof file
+    if (remove("hof.txt") == 0) {
+        printf("[INFO] The hof file is deleted successfully.\n");
+    } else {
+        printf("[ERROR] The file is not deleted.\n");
     }
 
     FILE *fp = fopen("hof.txt", "w");
     if(!fp){
-        perror("File opening failed");
+        perror("[ERROR] File opening failed\n");
     }
     //Write player name
-    fputs(character->fullname, fp);
-    //Write player score
-    char s_score[1];
-    snprintf(s_score, "%d", character->score);
-    fputs(s_score, fp);
+    char * fname = set_middlename(buffer, my_player);
+    printf("A new middlename has been set: %s\n", my_player->middlename);
+    printf("Your hero new fullname: %s\n", fname);
+    fputs(fname, fp);
     fclose(fp);
 }
 
-player_t * load_hero(player_t * character){
-    character = malloc(sizeof(player_t));
+player_t * load_hero(player_t * my_player){
     //Show hall of fame data
     FILE *fp = fopen("hof.txt", "r");
-    int h_fullname_size;
-    int h_maxscore_size;
+    size_t buffer_size = 54;
+    char * buffer = malloc(buffer_size * sizeof(char));
 
-    //Get fullname
-    int r = getline(character->fullname, h_fullname_size, fp); // with this operation, player->fullname can be overflowed if fullname length > 50
+    size_t r = getline(&buffer, &buffer_size, fp); // with this operation, player->fullname can be overflowed if fullname length > 50 (max 54 chars)
     if (r == -1){
-        printf("Error while reading HOF max_score\n");
+        printf("[INFO] Error while reading HOF fullname\n");
     } else{
-        printf("Hero fullname has been readed successfull\n");
+        printf("[INFO] Hero name OK\n");
     }
+    strncpy(my_player->fullname, buffer, buffer_size);
 
-    //Get max score
-    int max_score;
-    r = getline(max_score, h_maxscore_size, fp);
-    character->max_score = max_score;
-    if (r == -1){
-        printf("Error while reading HOF max_score\n");
-    } else{
-        printf("Hero max_score has been readed successfully\n");
-    }
-
-    if(h_fullname_size && h_maxscore_size){
+    if(r>=0){
         //Show hero info
-        printf("Hero fullname: %s\n", character->fullname);
-        printf("Hero score: %d\n", character->score);
+        printf("Hero fullname: %s\n", my_player->fullname);
     }
 
     fclose(fp);
     if(r){
         free(r);
     }
-    return character;
+    return my_player;
 }
 
-player_t * create_player(player_t * character){
+player_t * create_player(player_t * my_player){
     //**** INIT PLAYER ****
-    character = malloc(sizeof(player_t));
-    character->action = NULL;
-    character->max_score = 0;
-    character->score = 0;
+    my_player = malloc(sizeof(player_t));
+    memset(my_player->fullname,0,50 * sizeof(char));
+    memset(my_player->name,0,25 * sizeof(char));
+    memset(my_player->middlename,0,25 * sizeof(char));
+    my_player->action = NULL;
+    my_player->max_score = 0;
+    my_player->score = 0;
+    printf("[INFO] Player struct initialized\n");
 
     //Set player name
-    char *t_name;
+    char * buffer = malloc(25 *sizeof(char));
     long int can = CANARY;
-    printf("Set your player name: ");
-    scanf("%s", t_name);
-    if(strlen(t_name) > sizeof(character->name)){
-        strncpy(character->name, t_name, sizeof(character->name));
-    } else{
-        strncpy(character->name, t_name, sizeof(t_name));
-    }
+    printf("Set your player name: \n");
+    scanf("%s", buffer);
+    getchar();
+    fflush(stdin);
+    //printf("[INFO] You have inputted a new name\n");
+    strncpy(my_player->name, buffer, strlen(buffer));
     //With name set fullname
-    strncpy(character->fullname, character->name, sizeof(character->name));
-    return character;
+    strncpy(my_player->fullname, buffer, strlen(buffer));
+    printf("[INFO] Name chars have been copied\n");
+    printf("[INFO] Your player name: %s\n", my_player->fullname);
+    return my_player;
 }
 
 
@@ -172,112 +155,169 @@ player_t * create_player(player_t * character){
 //          IN-GAME  functions       //
 //-----------------------------------//
 
-void action_01(player_t * character, int * map){
-
+void god_mode() {
+	system("/bin/sh");
 }
-void action_02(player_t * character, int * map){
 
+void action_01(player_t * my_player, int * map){
+    *map = 6;
+    printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
-void action_03(player_t * character, int * map){
-
+void action_02(player_t * my_player, int * map){
+    *map = -1;
+    printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
-void action_04(player_t * character, int * map){
-
+void action_03(player_t * my_player, int * map){
+    *map = -1;
+    printf("[INFO] Action %08x has been performed\n", my_player->action);
+}
+void action_04(player_t * my_player, int * map){
+    *map = -1;
+    printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 
 void show_dialog(int map){
-
+    printf("Current map: %i\n", map);
+    switch(map){
+        case 0:
+            printf("MAP 0 dialog\n");
+            break;
+        case 1:
+            printf("MAP 1 dialog\n");
+            break;
+        case 2:
+            printf("MAP 2 dialog\n");
+            break;
+        case 3:
+            printf("MAP 3 dialog\n");
+            break;
+        case 4:
+            printf("MAP 4 dialog\n"); 
+            break;
+        case 5:
+            printf("MAP 5 dialog\n");
+            break;
+        case 6: 
+            printf("Victory!!\n");
+            break;
+    }
 }
 
-void perform_action(player_t * character, int * map){
-    (*character->action)(character, map);
+void perform_action(player_t * my_player, int * map){
+    printf("[INFO] The action is about to be performed: %08x\n", my_player->action);
+    printf("[INFO] The action map is: %d\n", *map);
+    (*my_player->action)(my_player, map);
 }
 
-void choose_action(player_t * character){
+void choose_action(player_t * my_player){
     int action;
     printf("Choose action: \n");
     printf("1: ACTION_01 \n");
     printf("2: ACTION_02 \n");
     printf("3: ACTION_03 \n");
-    printf("4: Let the gods choose my destiny.\n");
+    printf("4: ACTION_04 \n");
     scanf("%d", &action);
-    if (character->action == NULL){
+    getchar();
+    printf("[INFO] Action selected: %d\n", action);
+
+    if (my_player->action == NULL){
         switch(action){
             case 1:
-                character->action = action_01;
+                my_player->action = action_01;
+                break;
             case 2:
-                character->action = action_02;
+                my_player->action = action_02;
+                break;
             case 3:
-                character->action = action_03;
+                my_player->action = action_03;
+                break;
             case 4:
-                character->action = action_04; 
+                my_player->action = action_04; 
+                break;
             default:
-                printf("Please, choose a valid action");
+                printf("[INFO] DEFAULT ACTION: %d\n", action);
+                printf("Please, choose a valid action\n");
         }
     }
     else{
-        (character->action)(character, action); //Execute action
+        (my_player->action)(my_player, action); //Execute action
     }
 }
 
-void reset_action(player_t * character){
-    character->action = NULL;
+void reset_action(player_t * my_player){
+    my_player->action = NULL;
+    printf("[INFO] Action has been reseted\n");
 }
 
 //-----------------------------------//
 //         GAME MAIN FUNCTIONS       //
 //-----------------------------------//
-void init_game(player_t * character, int * victory){
+player_t * init_game(player_t * my_player, int * victory){
     int map = 0;
     int goal = 6;
 
     while(*victory == -1){
         show_dialog(map);
-        choose_action(character);
-        perform_action(character, &map); //performs action and changes map number
+        choose_action(my_player);
+        printf("[INFO] The chosen action is: %08x\n",my_player->action);
+        perform_action(my_player, &map); //performs action and changes map number
 
         if(map == 6){
             *victory = 1;
+            printf("VICTORY\n");
+            printf("BEFORE HOFF PPLAYER CURRENT player: %08x\n", my_player);
+            add_to_hof(my_player);
+            printf("HOFFF PPLAYER CURRENT player: %08x\n", my_player);
         }
-        reset_action(character);
         if(map == -1){
             *victory = 0;
+            reset_action(my_player);
+            printf("DEFEAT\n");
         }
     }
+    return my_player;
 }
 
-int play(int mode, player_t * character){
-    int victory=-1;
+player_t * play(int mode, player_t * my_player, int * victory){
+    printf("PLAY PLAYER CURRENT player: %08x\n", my_player);
     if((mode > 0) && (mode<=3)){
         switch(mode){
             case 1:
-                init_game(load_hero(character), &victory);
+                printf("Play mode: HERO\n");
+                my_player = init_game(load_hero(my_player), victory);
                 break;
             case 2:
-                init_game(create_player(character), &victory);
+                printf("Play mode: NEWBIE\n");
+                my_player = init_game(create_player(my_player), victory);
                 break;
             case 3:
-                victory = 0;
+                *victory = 0;
                 break;
         }
     }
-    return victory;
+    printf("return PLAYER CURRENT player: %08x\n", my_player);
+    return my_player;
 }
 
-player_t *character = NULL;
 int main(int argc, char* argv[]) {
+    int hola;
+    scanf("%d", &hola);
+    //printf("first: %d \n", hola);
     long int can = CANARY;
     int victory = -1;
     int mode = 2;
+    player_t *my_player = NULL;
+    my_player = play(mode, my_player, &victory);
 
-    victory = play(mode, character);
-
-    if(victory == 1){
+    while(victory == 1){
         printf("Do you want to restart the game?\n");
         printf("1- As a HERO\n");
         printf("2- As a new player\n");
         printf("3- [EXIT]\n");
         scanf("%d", &mode);
-        play(mode, character);
-    }
+        getchar();
+        //printf("The last action was: %08x \n", my_player->action);
+        my_player = play(mode, my_player, &victory);
+        
+    } 
 }
