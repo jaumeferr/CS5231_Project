@@ -257,6 +257,7 @@ int main(int argc, char* argv[]) {
     //Player init
     player_t *my_player;
     my_player = create_player(my_player, argv[1]);
+    printf("Name: FUCK");
     printf("Name: %s", argv[1]);
 
     while(victory == -1){
