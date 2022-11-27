@@ -1,0 +1,3 @@
+1- obtain god_mode() address
+2- integer overflow in function set_middlename()
+    2.1- size of middlename has to be >=54
