@@ -32,21 +32,22 @@ typedef struct player{
 //----------------//
 char * set_middlename(char * middlename, player_t * my_player, unsigned int mid_size){
     //Integer overflow with mid_size is possible
+    char * concatenation;
     if(mid_size < MAX_MIDDLENAME_SIZE){
-        char * concatenation = malloc(strlen(my_player->name) + mid_size * sizeof(char));
-        char * res;
+        concatenation = malloc(strlen(my_player->name) + mid_size * sizeof(char));
         printf("[INFO] Name to be concatenated: %s -> size: %d\n", my_player->name, strlen(my_player->name));
         printf("[INFO] Middlename to be added: %s -> size: %d\n", middlename, strlen(middlename));
 
-        res = strncpy(concatenation, my_player->name, strlen(my_player->name));
-        res = strncat(concatenation, ", ", 2);
+        strncpy(concatenation, my_player->name, strlen(my_player->name));
+        strncat(concatenation, ", ", 2);
         printf("[INFO] mid_size value is: %i", mid_size);
-        res = strncat(concatenation, middlename, mid_size); //
+        strncat(concatenation, middlename, mid_size); //
         // res = strncat(concatenation, "\n", 1);
         printf("[INFO] Concatenation is now %s with size %d\n", concatenation, strlen(concatenation));
     }
     else{
-        printf("[INFO] Middlename is too large\n");
+        printf("[INFO] Sorry, your middlename is too large\n");
+        concatenation = my_player->name;
     }
     return concatenation;
 }
@@ -55,7 +56,7 @@ char * set_middlename(char * middlename, player_t * my_player, unsigned int mid_
 //    my_player CONFIG  functions    //
 //-----------------------------------//
 
-void add_to_hof(player_t * my_player, char * middlename){
+void add_to_hof(player_t * my_player, char * middlename, unsigned int mid_size){
     printf("Congratulations! You have achieved the maximum score, you're a HERO!\n");
 
     //Remove outdated hof file
@@ -70,7 +71,7 @@ void add_to_hof(player_t * my_player, char * middlename){
         perror("[ERROR] File opening failed\n");
     }
     //New player fullname at char* conc
-    char * conc = set_middlename(middlename, my_player); //Conc length can be > than fullname length if integer overflow is performed
+    char * conc = set_middlename(middlename, my_player, mid_size); //Conc length can be > than fullname length if integer overflow is performed
     printf("[INFO] A new middlename has been set: %s\n", my_player->middlename);
     printf("[INFO] The true middlename is: %s\n", conc);
     printf("Your hero new fullname: %s\n", conc);
@@ -157,7 +158,7 @@ void action_04(player_t * my_player, int * map){
     fgets(buf, sizeof(buf), stdin);
     snprintf(my_player->war_cry, 10, buf);*/
     printf("[Player] Report situation: %x\n", my_player->action); 
-    printf("[INFO] Action %08x has been performed\n", my_player->action);*/
+    printf("[INFO] Action %08x has been performed\n", my_player->action);
     god_mode();
 }
 
@@ -260,7 +261,7 @@ int main(int argc, char* argv[]) {
             victory = 1;
             printf("VICTORY\n");
             printf("BEFORE HOFF PPLAYER CURRENT player: %08x\n", my_player);
-            add_to_hof(my_player, argv[2]); //Add middlename to player name and create fullname
+            add_to_hof(my_player, argv[2], argv[3]); //Add middlename to player name and create fullname
             printf("HOFFF PPLAYER CURRENT player: %08x\n", my_player);
             reset_action(my_player);
         }
