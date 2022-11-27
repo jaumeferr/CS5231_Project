@@ -40,9 +40,16 @@ char * set_middlename(char * middlename, player_t * my_player, unsigned long mid
 
         strncpy(concatenation, my_player->name, strlen(my_player->name));
         strcat(concatenation, ", ");
-        printf("[INFO] mid_size value is: %i", mid_size);
+        //DIFICULTY 2
+        /*printf("[INFO] mid_size value is: %i", mid_size);
         strncat(concatenation, middlename, mid_size); //
-        // res = strncat(concatenation, "\n", 1);
+        // res = strncat(concatenation, "\n", 1);*/
+        
+        //DIFICULTY 1
+        printf("[INFO] mid_size value is: %i", mid_size);
+        printf("[INFO] middlename length is actually: %i", strlen(middlename));
+        strncat(concatenation, middlename, strlen(middlename)); 
+        // res = strncat(concatenation, "\n", 1);*/
         printf("[INFO] Concatenation is now %s with size %d\n", concatenation, strlen(concatenation));
     }
     else{
