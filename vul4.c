@@ -255,7 +255,7 @@ int main(int argc, char* argv[]) {
     int goal = 6;
 
     //Player init
-    player_t *my_player;
+    player_t *my_player = NULL;
     my_player = create_player(my_player, argv[1]);
     printf("Name: FUCK");
     printf("Name: %s", argv[1]);
