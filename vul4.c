@@ -78,8 +78,6 @@ void add_to_hof(player_t * my_player, char * middlename, unsigned long mid_size)
     }
     //New player fullname at char* conc
     char * conc = set_middlename(middlename, my_player, mid_size); //Conc length can be > than fullname length if integer overflow is performed
-    printf("[INFO] A new middlename has been set: %s\n", my_player->middlename);
-    printf("[INFO] The true middlename is: %s\n", conc);
     printf("Your hero new fullname: %s\n", conc);
     fputs(conc, fp);
     fclose(fp);
@@ -115,11 +113,11 @@ player_t * create_player(player_t * my_player, char * name){
     my_player->action = NULL;
     my_player->max_score = 0;
     my_player->score = 0;
-    printf("[INFO] Player struct initialized\n");
+    printf("[INFO] Player struct initialized: %08x\n", my_player);
 
     //printf("[INFO] You have set a new name\n");
     strncpy(my_player->name, name, strlen(name));
-    printf("[INFO] Player name: %s", my_player->name);
+    printf("[INFO] Player name: %s\n", my_player->name);
     return my_player;
 }
 
@@ -190,9 +188,6 @@ void show_dialog(int map){
         case 5:
             printf("MAP 5 dialog\n");
             break;
-        case 6: 
-            printf("Victory!!\n");
-            break;
     }
 }
 
@@ -213,7 +208,6 @@ void choose_action(player_t * my_player){
     if (my_player->action == NULL){
         scanf("%d", &action);
         getchar();
-        printf("[INFO] Action selected: %d\n", action);
         switch(action){
             case 1:
                 my_player->action = action_01;
@@ -295,6 +289,7 @@ int main(int argc, char* argv[]) {
 
         if(restart == 1){
             victory = -1;
+            map = 0;
             //LOAD HERO
                 FILE *fp = fopen("hof.txt", "r");
                 size_t buffer_size = 54;
@@ -323,12 +318,12 @@ int main(int argc, char* argv[]) {
                 if(map == goal){
                     victory = 1;
                     printf("CONGRATULATIONS!, %s!\n", my_player->fullname);
-                    printf("Game created by: 2022 NUS SoC students");
+                    printf("Game created by: 2022 NUS CS5231 students\n");
                     return 0;
                 }
 
                 if(map == -1){
-                    printf("That's a shame! A hero was defeated.\n");
+                    printf("What a shame! A hero was defeated.\n");
                     victory = -1;
                     reset_action(my_player);
                     return 0;
