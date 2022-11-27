@@ -256,9 +256,8 @@ int main(int argc, char* argv[]) {
 
     //Player init
     player_t *my_player = NULL;
-    my_player = create_player(my_player, argv[1]);
-    printf("Name: FUCK");
     printf("Name: %s", argv[1]);
+    my_player = create_player(my_player, argv[1]);
 
     while(victory == -1){
         show_dialog(map);
