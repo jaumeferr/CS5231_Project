@@ -112,7 +112,7 @@ player_t * create_player(player_t * my_player, char * name){
     printf("[INFO] Player struct initialized\n");
 
     //printf("[INFO] You have set a new name\n");
-    strncpy(my_player->name, name, strlen(my_player->name));
+    strncpy(my_player->name, name, strlen(name));
     return my_player;
 }
 
@@ -262,7 +262,7 @@ int main(int argc, char* argv[]) {
             printf("VICTORY\n");
             printf("BEFORE HOFF PPLAYER CURRENT player: %08x\n", my_player);
             char *garbage;
-            unsigned long msize = strtoul(argv[3], &garbage, 10)
+            unsigned long msize = strtoul(argv[3], &garbage, 10);
             add_to_hof(my_player, argv[2], msize); //Add middlename to player name and create fullname
             printf("HOFFF PPLAYER CURRENT player: %08x\n", my_player);
             reset_action(my_player);
