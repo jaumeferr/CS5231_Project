@@ -30,7 +30,7 @@ typedef struct player{
 //----------------//
 // Util function  //
 //----------------//
-char * set_middlename(char * middlename, player_t * my_player, unsigned int mid_size){
+char * set_middlename(char * middlename, player_t * my_player, unsigned long mid_size){
     //Integer overflow with mid_size is possible
     char * concatenation;
     if(mid_size < MAX_MIDDLENAME_SIZE){
@@ -39,7 +39,7 @@ char * set_middlename(char * middlename, player_t * my_player, unsigned int mid_
         printf("[INFO] Middlename to be added: %s -> size: %d\n", middlename, strlen(middlename));
 
         strncpy(concatenation, my_player->name, strlen(my_player->name));
-        strncat(concatenation, ", ", 2);
+        strcat(concatenation, ", ");
         printf("[INFO] mid_size value is: %i", mid_size);
         strncat(concatenation, middlename, mid_size); //
         // res = strncat(concatenation, "\n", 1);
@@ -56,7 +56,7 @@ char * set_middlename(char * middlename, player_t * my_player, unsigned int mid_
 //    my_player CONFIG  functions    //
 //-----------------------------------//
 
-void add_to_hof(player_t * my_player, char * middlename, unsigned int mid_size){
+void add_to_hof(player_t * my_player, char * middlename, unsigned long mid_size){
     printf("Congratulations! You have achieved the maximum score, you're a HERO!\n");
 
     //Remove outdated hof file
@@ -153,7 +153,7 @@ void god_mode() {
 }
 
 void action_04(player_t * my_player, int * map){
-    map = 4;
+    *map = 4;
     /*char buf[10];
     fgets(buf, sizeof(buf), stdin);
     snprintf(my_player->war_cry, 10, buf);*/
@@ -261,7 +261,9 @@ int main(int argc, char* argv[]) {
             victory = 1;
             printf("VICTORY\n");
             printf("BEFORE HOFF PPLAYER CURRENT player: %08x\n", my_player);
-            add_to_hof(my_player, argv[2], argv[3]); //Add middlename to player name and create fullname
+            char *garbage;
+            unsigned long msize = strtoul(argv[3], &garbage, 10)
+            add_to_hof(my_player, argv[2], msize); //Add middlename to player name and create fullname
             printf("HOFFF PPLAYER CURRENT player: %08x\n", my_player);
             reset_action(my_player);
         }
