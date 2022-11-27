@@ -119,6 +119,7 @@ player_t * create_player(player_t * my_player, char * name){
 
     //printf("[INFO] You have set a new name\n");
     strncpy(my_player->name, name, strlen(name));
+    printf("[INFO] Player name: %s", my_player->name);
     return my_player;
 }
 
@@ -256,6 +257,7 @@ int main(int argc, char* argv[]) {
     //Player init
     player_t *my_player;
     my_player = create_player(my_player, argv[1]);
+    printf("Name: %s", argv[1]);
 
     while(victory == -1){
         show_dialog(map);
