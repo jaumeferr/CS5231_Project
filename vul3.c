@@ -1,3 +1,4 @@
+
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,19 +8,20 @@
 
 #define CANARY 0xa1e7b763
 
-// Compiled with gcc -ggdb -fno-stack-protector -mpreferred-stack-boundary=3 -mstack-protector-guard=global -L/usr/lib32 vul3.c -o challenge
+// Compiled with gcc -ggdb -m32 -fno-stack-protector -mpreferred-stack-boundary=2 -mstack-protector-guard=global -L/usr/lib32 vul3.c -o challenge
 
 //---------------------------//
 // Player and Npc structures //
 //---------------------------//
 
 typedef struct player{
-	void (*action)(); //Modify action function address by overflowing fullname field
-	char fullname[50]; //To overflow -> 25(name)+ 2(", ") + 23(middle) + 4(func addr)
+    void (*action)(); //Modify action function address by overflowing fullname field
+    char fullname[50]; //To overflow -> 25(name)+ 2(", ") + 23(middle) + 4(func addr)
     char name[25];
     char middlename[25];
     int max_score;
     int score;
+    char war_cry[10];
 } player_t;
 
 //----------------//
@@ -123,7 +125,7 @@ player_t * load_hero(player_t * my_player){
     return my_player;
 }
 
-player_t * create_player(player_t * my_player){
+player_t * create_player(player_t * my_player, char * name){
     //**** INIT PLAYER ****
     my_player = malloc(sizeof(player_t));
     memset(my_player->fullname,0,50 * sizeof(char));
@@ -134,17 +136,10 @@ player_t * create_player(player_t * my_player){
     my_player->score = 0;
     printf("[INFO] Player struct initialized\n");
 
-    //Set player name
-    char * buffer = malloc(25 *sizeof(char));
-    long int can = CANARY;
-    printf("Set your player name: \n");
-    scanf("%s", buffer);
-    getchar();
-    fflush(stdin);
-    //printf("[INFO] You have inputted a new name\n");
-    strncpy(my_player->name, buffer, strlen(buffer));
+    //printf("[INFO] You have set a new name\n");
+    strncpy(my_player->name, name, strlen(my_player->name));
     //With name set fullname
-    strncpy(my_player->fullname, buffer, strlen(buffer));
+    strncpy(my_player->fullname, name, strlen(my_player->name));
     printf("[INFO] Name chars have been copied\n");
     printf("[INFO] Your player name: %s\n", my_player->fullname);
     return my_player;
@@ -155,24 +150,41 @@ player_t * create_player(player_t * my_player){
 //          IN-GAME  functions       //
 //-----------------------------------//
 
-void god_mode() {
-	system("/bin/sh");
-}
-
 void action_01(player_t * my_player, int * map){
     *map = 6;
+    char buf[10];
+    scanf("%s", buf);
+    snprintf(my_player->war_cry,10,buf);
+    printf("%s\n", my_player->war_cry);
     printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 void action_02(player_t * my_player, int * map){
     *map = -1;
+    char buf[10];
+    scanf("%s", buf);
+    snprintf(my_player->war_cry,10,buf);
+    printf("%s\n", my_player->war_cry);
     printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 void action_03(player_t * my_player, int * map){
     *map = -1;
+    char buf[10];
+    scanf("%s\n", buf);
+    snprintf(my_player->war_cry,10,buf);
+    printf("%s\n", my_player->war_cry);
     printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
+
+void god_mode() {
+        system("/bin/sh");
+}
+
 void action_04(player_t * my_player, int * map){
     *map = -1;
+    char buf[10];
+    fgets(buf, sizeof(buf), stdin);
+    snprintf(my_player->war_cry, 10, buf);
+    printf("[Player]: %s\n", my_player->war_cry); 
     printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 
@@ -278,7 +290,7 @@ player_t * init_game(player_t * my_player, int * victory){
     return my_player;
 }
 
-player_t * play(int mode, player_t * my_player, int * victory){
+player_t * play(int mode, player_t * my_player, int * victory, char * name){
     printf("PLAY PLAYER CURRENT player: %08x\n", my_player);
     if((mode > 0) && (mode<=3)){
         switch(mode){
@@ -288,7 +300,7 @@ player_t * play(int mode, player_t * my_player, int * victory){
                 break;
             case 2:
                 printf("Play mode: NEWBIE\n");
-                my_player = init_game(create_player(my_player), victory);
+                my_player = init_game(create_player(my_player, name), victory);
                 break;
             case 3:
                 *victory = 0;
@@ -300,15 +312,14 @@ player_t * play(int mode, player_t * my_player, int * victory){
 }
 
 int main(int argc, char* argv[]) {
-    int hola;
-    scanf("%d", &hola);
-    //printf("first: %d \n", hola);
     long int can = CANARY;
     int victory = -1;
     int mode = 2;
-    player_t *my_player = NULL;
-    my_player = play(mode, my_player, &victory);
-
+    player_t * my_player = NULL;
+    printf("My name is: %s", argv[1]);
+    //my_player=
+    my_player = play(mode, my_player, &victory, argv[1]);
+    
     while(victory == 1){
         printf("Do you want to restart the game?\n");
         printf("1- As a HERO\n");
@@ -317,7 +328,7 @@ int main(int argc, char* argv[]) {
         scanf("%d", &mode);
         getchar();
         //printf("The last action was: %08x \n", my_player->action);
-        my_player = play(mode, my_player, &victory);
+        my_player = play(mode, my_player, &victory, argv[1]);
         
     } 
 }
