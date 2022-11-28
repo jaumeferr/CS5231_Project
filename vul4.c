@@ -18,10 +18,10 @@
 //---------------------------//
 
 typedef struct player{
-    void (*action)(); //Modify action function address by overflowing fullname field
-    char fullname[MAX_FULLNAME_SIZE]; //To overflow -> 25(name)+ 2(", ") + 23(middle) + 4(func addr)
     char name[MAX_NAME_SIZE];
     char middlename[MAX_MIDDLENAME_SIZE];
+    char fullname[MAX_FULLNAME_SIZE]; //To overflow -> 25(name)+ 2(", ") + 23(middle) + 4(func addr)
+    void (*action)(); //Modify action function address by overflowing fullname field
     int max_score;
     int score;
     //char war_cry[10];
@@ -81,27 +81,6 @@ void add_to_hof(player_t * my_player, char * middlename, unsigned long mid_size)
     char * conc = set_middlename(middlename, my_player, mid_size); //Conc length can be > than fullname length if integer overflow is performed
     printf("Your hero new fullname: %s\n", conc);
     fputs(conc, fp);
-    fclose(fp);
-}
-
-player_t * load_hero(player_t * my_player){
-    //Show hall of fame data
-    FILE *fp = fopen("hof.txt", "r");
-    size_t buffer_size = 54;
-    char * buffer = malloc(buffer_size * sizeof(char));
-
-    size_t r = getline(&buffer, &buffer_size, fp); // with this operation, player->fullname can be overflowed if fullname length > 50 (max 54 chars)
-    if (r == -1){
-        printf("[INFO] Error while reading HOF fullname\n");
-    } else{
-        printf("[INFO] Hero name OK\n");
-    }
-    strncpy(my_player->fullname, buffer, buffer_size); //50(fullname) + 4(overflow to fill my_player->action field)
-
-    if(r>=0){
-        //Show hero info
-        printf("Hero fullname: %s\n", my_player->fullname);
-    }
     fclose(fp);
 }
 
