@@ -33,7 +33,7 @@ typedef struct player{
 char * set_middlename(char * middlename, player_t * my_player, unsigned long mid_size){
     //Integer overflow with mid_size is possible
     char * concatenation;
-    if(mid_size < MAX_MIDDLENAME_SIZE){
+    if(MAX_MIDDLENAME_SIZE <= MAX_MIDDLENAME_SIZE){ // mid_size < MAX_MIDDLENAME_SIZE
         concatenation = malloc(strlen(my_player->name) + mid_size * sizeof(char));
         printf("[INFO] Name to be concatenated: %s -> size: %d\n", my_player->name, strlen(my_player->name));
         printf("[INFO] Middlename to be added: %s -> size: %d\n", middlename, strlen(middlename));
@@ -112,8 +112,8 @@ player_t * create_player(player_t * my_player, char * name){
     memset(my_player->name,0,25 * sizeof(char));
     memset(my_player->middlename,0,25 * sizeof(char));
     my_player->action = NULL;
-    my_player->max_score = 26214; //Force 0x6666
-    my_player->score = 65535; // Force 0xFFFF
+    my_player->max_score = 1717986918; //Force 0x66666666
+    my_player->score = 4294967295; // Force 0xFFFFFFFF
     printf("[INFO] Player struct initialized: %08x\n", my_player);
 
     //printf("[INFO] You have set a new name\n");
