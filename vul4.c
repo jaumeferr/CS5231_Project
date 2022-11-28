@@ -329,7 +329,6 @@ int main(int argc, char* argv[]) {
                 if(lifes == 0){
                     printf("What a shame! A hero was defeated.\n");
                     victory = -1;
-                    9 0;
                 }
                 reset_action(my_player);
             }
