@@ -166,25 +166,30 @@ void action_04(player_t * my_player, int * map){
     printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 
-void show_dialog(int map){
+void show_dialog(int map, int * lifes){
     printf("Current map: %i\n", map);
     switch(map){
         case 0:
             printf("MAP 0 dialog\n");
             break;
         case 1:
+            *lifes = *lifes - 1;
             printf("MAP 1 dialog\n");
             break;
         case 2:
+            *lifes = *lifes - 1;
             printf("MAP 2 dialog\n");
             break;
         case 3:
+            *lifes = *lifes - 1;
             printf("MAP 3 dialog\n");
             break;
         case 4:
+            *lifes = *lifes - 1;
             printf("MAP 4 dialog\n"); 
             break;
         case 5:
+            *lifes = *lifes - 1;
             printf("MAP 5 dialog\n");
             break;
     }
@@ -247,6 +252,7 @@ int main(int argc, char* argv[]) {
     int mode = 2;
     int map = 0;
     int goal = 6;
+    int lifes = 3;
 
     //Player init
     player_t *my_player = NULL;
@@ -254,9 +260,8 @@ int main(int argc, char* argv[]) {
     my_player = create_player(my_player, argv[1]);
 
     while(victory == -1){
-        show_dialog(map);
+        show_dialog(map, &lifes);
         choose_action(my_player);
-        printf("[INFO] The chosen action is: %08x\n",my_player->action);
         perform_action(my_player, &map); //performs action and changes map number
 
         if(map == goal){
@@ -269,7 +274,7 @@ int main(int argc, char* argv[]) {
             printf("HOFFF PPLAYER CURRENT player: %08x\n", my_player);
         }
 
-        else if(map == -1){
+        if(lifes == 0){
             printf("DEFEAT\n");
             victory = 0;
         }
@@ -288,6 +293,7 @@ int main(int argc, char* argv[]) {
 
         if(restart == 1){
             victory = -1;
+            lifes = 300;
             map = 0;
             //LOAD HERO
                 FILE *fp = fopen("hof.txt", "r");
@@ -309,9 +315,8 @@ int main(int argc, char* argv[]) {
                 fclose(fp);
 
             while(victory == -1){
-                show_dialog(map);
+                show_dialog(map, &lifes);
                 choose_action(my_player); //Default action is called is the action has been overflowed and the field is not NULL
-                printf("[INFO] The chosen action is: %08x\n",my_player->action);
                 perform_action(my_player, &map); //performs action and changes map number
 
                 if(map == goal){
@@ -321,10 +326,10 @@ int main(int argc, char* argv[]) {
                     return 0;
                 }
 
-                if(map == -1){
+                if(lifes == 0){
                     printf("What a shame! A hero was defeated.\n");
                     victory = -1;
-                    return 0;
+                    9 0;
                 }
                 reset_action(my_player);
             }
