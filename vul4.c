@@ -164,7 +164,6 @@ void action_04(player_t * my_player, int * map){
     snprintf(my_player->war_cry, 10, buf);*/
     printf("[Player] Report situation: %x\n", my_player->action); 
     printf("[INFO] Action %08x has been performed\n", my_player->action);
-    god_mode();
 }
 
 void show_dialog(int map){
