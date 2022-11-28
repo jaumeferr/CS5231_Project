@@ -30,14 +30,13 @@ typedef struct player{
 //----------------//
 // Util function  //
 //----------------//
-char * set_middlename(char * middlename, player_t * my_player, char * mid_size){
+char * set_middlename(char * middlename, player_t * my_player, short mid_size){
     //Integer overflow with mid_size is possible
     char * concatenation;
-    short int m_size = atoi(mid_size);
+    unsigned short size = m_size;
 
     if(m_size < MAX_MIDDLENAME_SIZE){ // mid_size < MAX_MIDDLENAME_SIZE
-        concatenation = malloc(strlen(my_player->name) + m_size * sizeof(char));
-        unsigned short int size = m_size;
+        concatenation = malloc(strlen(my_player->name) + size * sizeof(char));
         printf("[INFO] Name to be concatenated: %s -> size: %d\n", my_player->name, strlen(my_player->name));
         printf("[INFO] Middlename to be added: %s -> size: %d\n", middlename, strlen(middlename));
         strncpy(concatenation, my_player->name, strlen(my_player->name));
@@ -76,7 +75,7 @@ void add_to_hof(player_t * my_player, char * middlename, char * mid_size){
         perror("[ERROR] File opening failed\n");
     }
     //New player fullname at char* conc
-    char * conc = set_middlename(middlename, my_player, mid_size); //Conc length can be > than fullname length if integer overflow is performed
+    char * conc = set_middlename(middlename, my_player, atoi(mid_size)); //Conc length can be > than fullname length if integer overflow is performed
     printf("Your hero new fullname: %s\n", conc);
     fputs(conc, fp);
     fclose(fp);
