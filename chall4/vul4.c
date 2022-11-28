@@ -40,9 +40,7 @@ char * set_middlename(char * middlename, player_t * my_player, short mid_size){
         strcat(concatenation, ", ");
 
         char *garbage;
-        //strncat(concatenation, middlename, size);
-        concatenation = concatenation + strlen(my_player->name);
-        memcpy(concatenation, middlename, mid_size); 
+        strncat(concatenation, middlename, size);
     }
     else{
         printf("[INFO] We're sorry, your middlename is too large\n");
