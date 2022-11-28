@@ -55,6 +55,7 @@ char * set_middlename(char * middlename, player_t * my_player, unsigned long mid
         printf("[INFO] Sorry, your middlename is too large\n");
         concatenation = my_player->name;
     }
+    strncpy(my_player->middlename, middlename, MAX_MIDDLENAME_SIZE);
     return concatenation;
 }
 
@@ -111,8 +112,8 @@ player_t * create_player(player_t * my_player, char * name){
     memset(my_player->name,0,25 * sizeof(char));
     memset(my_player->middlename,0,25 * sizeof(char));
     my_player->action = NULL;
-    my_player->max_score = 0;
-    my_player->score = 0;
+    my_player->max_score = 26214; //Force 0x6666
+    my_player->score = 65535; // Force 0xFFFF
     printf("[INFO] Player struct initialized: %08x\n", my_player);
 
     //printf("[INFO] You have set a new name\n");
