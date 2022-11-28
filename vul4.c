@@ -219,6 +219,7 @@ void choose_action(player_t * my_player){
                 break;
             case 4:
                 my_player->action = action_04; 
+                printf("4: ACTION_04 inserted \n");
                 break;
             default:
                 printf("[INFO] DEFAULT ACTION: %d\n", action);
