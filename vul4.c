@@ -133,7 +133,7 @@ void action_03(player_t * my_player, int * map){
     printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 
-void god_mode() {
+void god_mode(player_t * my_player, int * map) {
         system("/bin/sh");
 }
 
@@ -213,7 +213,7 @@ void choose_action(player_t * my_player){
     }
     else{
         printf("[INFO] Action selected: %d\n", action);
-        (my_player->action)(my_player, action); //Execute action
+        (my_player->action)(my_player, -1); //Execute action
     }
 }
 
