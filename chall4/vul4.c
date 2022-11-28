@@ -33,7 +33,7 @@ typedef struct player{
 char * set_middlename(char * middlename, player_t * my_player, short mid_size){
     //Integer overflow with mid_size is possible
     char * concatenation;
-    unsigned short size = m_size;
+    unsigned short size = mid_size;
 
     if(m_size < MAX_MIDDLENAME_SIZE){ // mid_size < MAX_MIDDLENAME_SIZE
         concatenation = malloc(strlen(my_player->name) + size * sizeof(char));
@@ -43,9 +43,9 @@ char * set_middlename(char * middlename, player_t * my_player, short mid_size){
         strcat(concatenation, ", ");
 
         char *garbage;
-        printf("[INFO] mid_size value is: %i", mid_size);
-        strncat(concatenation, middlename, strtoul(mid_size, &garbage, 10)); 
-        printf("[INFO] mid_size UNSIGNED value is: %ul", mid_size);
+        printf("[INFO] mid_size value is: %i", size);
+        strncat(concatenation, middlename, size); 
+        printf("[INFO] mid_size UNSIGNED value is: %ul", size);
         printf("[INFO] Concatenation is now %s with size %d\n", concatenation, strlen(concatenation));
     }
     else{
