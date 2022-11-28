@@ -30,19 +30,22 @@ typedef struct player{
 //----------------//
 // Util function  //
 //----------------//
-char * set_middlename(char * middlename, player_t * my_player, unsigned long mid_size){
+char * set_middlename(char * middlename, player_t * my_player, char * mid_size){
     //Integer overflow with mid_size is possible
     char * concatenation;
-    if(mid_size < MAX_MIDDLENAME_SIZE){ // mid_size < MAX_MIDDLENAME_SIZE
-        concatenation = malloc(strlen(my_player->name) + mid_size * sizeof(char));
+    int m_size = atoi(mid_size);
+
+    if(m_size < MAX_MIDDLENAME_SIZE){ // mid_size < MAX_MIDDLENAME_SIZE
+        concatenation = malloc(strlen(my_player->name) + m_size * sizeof(char));
+        unsigned int size = m_size;
         printf("[INFO] Name to be concatenated: %s -> size: %d\n", my_player->name, strlen(my_player->name));
         printf("[INFO] Middlename to be added: %s -> size: %d\n", middlename, strlen(middlename));
-
         strncpy(concatenation, my_player->name, strlen(my_player->name));
         strcat(concatenation, ", ");
         //DIFICULTY 2
         printf("[INFO] mid_size value is: %i", mid_size);
-        strncat(concatenation, middlename, mid_size); 
+        strncat(concatenation, middlename, strtoul(mid_size)); 
+        printf("[INFO] mid_size UNSIGNED value is: %ul", mid_size);
         
         /*DIFICULTY 1
         printf("[INFO] mid_size value is: %i", mid_size);
@@ -63,7 +66,7 @@ char * set_middlename(char * middlename, player_t * my_player, unsigned long mid
 //    my_player CONFIG  functions    //
 //-----------------------------------//
 
-void add_to_hof(player_t * my_player, char * middlename, unsigned long mid_size){
+void add_to_hof(player_t * my_player, char * middlename, char * mid_size){
     printf("Congratulations! You have achieved the maximum score, you're a HERO!\n");
 
     //Remove outdated hof file
@@ -248,9 +251,7 @@ int main(int argc, char* argv[]) {
             victory = 1;
             printf("VICTORY\n");
             printf("BEFORE HOFF PPLAYER CURRENT player: %08x\n", my_player);
-            char *garbage;
-            unsigned long msize = strtoul(argv[3], &garbage, 10);
-            add_to_hof(my_player, argv[2], msize); //Add middlename to player name and create fullname
+            add_to_hof(my_player, argv[2], argv[3]); //Add middlename to player name and create fullname
             printf("HOFFF PPLAYER CURRENT player: %08x\n", my_player);
         }
 
