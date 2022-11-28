@@ -11,7 +11,7 @@
 #define MAX_NAME_SIZE 25
 #define MAX_MIDDLENAME_SIZE 25
 
-// Compiled with gcc -ggdb -m32 -fno-stack-protector -mpreferred-stack-boundary=2 -mstack-protector-guard=global -L/usr/lib32 vul4.c -o challenge_04
+// Compiled with gcc -ggdb -m32 -fno-stack-protector -mpreferred-stack-boundary=2 -mstack-protector-guard=global -L/usr/lib32 vul5.c -o challenge_05
 
 //---------------------------//
 // Player and Npc structures //
@@ -30,11 +30,10 @@ typedef struct player{
 // Util function  //
 //----------------//
 char * set_middlename(char * middlename, player_t * my_player, short mid_size){
-    //Integer overflow with mid_size is possible
     char * concatenation;
     unsigned short size = mid_size;
 
-    if(mid_size < MAX_MIDDLENAME_SIZE){ // mid_size < MAX_MIDDLENAME_SIZE
+    if(mid_size < MAX_MIDDLENAME_SIZE){
         concatenation = malloc(strlen(my_player->name) + size * sizeof(char));
         strncpy(concatenation, my_player->name, strlen(my_player->name));
         strcat(concatenation, ", ");
@@ -68,8 +67,8 @@ void add_to_hof(player_t * my_player, char * middlename, char * mid_size){
     if(!fp){
         perror("[ERROR] File opening failed\n");
     }
-    //New player fullname at char* conc
-    char * conc = set_middlename(middlename, my_player, atoi(mid_size)); //Conc length can be > than fullname length if integer overflow is performed
+    // Player fullname at char* conc
+    char * conc = set_middlename(middlename, my_player, atoi(mid_size));
     fputs(conc, fp);
     fclose(fp);
 }
@@ -84,7 +83,6 @@ player_t * create_player(player_t * my_player, char * name){
     my_player->max_score = 1717986918; //Force 0x66666666
     my_player->score = 4294967295; // Force 0xFFFFFFFF
 
-    //printf("[INFO] You have set a new name\n");
     strncpy(my_player->name, name, strlen(name));
     printf("[INFO] Player name: %s\n", my_player->name);
     return my_player;
@@ -97,42 +95,21 @@ player_t * create_player(player_t * my_player, char * name){
 
 void run_away(player_t * my_player, int * map){
     *map = 4;
-    /*char buf[10];
-    scanf("%s", buf);
-    snprintf(my_player->war_cry,10,buf);
-    printf("%s\n", my_player->war_cry);*/
-    printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 void slain(player_t * my_player, int * map){
     *map = 1;
-    /*
-    char buf[10];
-    scanf("%s", buf);
-    snprintf(my_player->war_cry,10,buf);
-    printf("%s\n", my_player->war_cry);*/
-    printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 void negotiate(player_t * my_player, int * map){
     *map = 2;
-    /*
-    char buf[10];
-    scanf("%s\n", buf);
-    snprintf(my_player->war_cry,10,buf);
-    printf("%s\n", my_player->war_cry);*/
-    printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 
 void god_mode(player_t * my_player, int * map) {
-        system("/bin/sh");
+    system("/bin/sh");
 }
 
 void meditate(player_t * my_player, int * map){
-    *map = 4;
-    /*char buf[10];
-    fgets(buf, sizeof(buf), stdin);
-    snprintf(my_player->war_cry, 10, buf);*/
+    *map = 3;
     printf("[Player] *Meditates* to find meaning in life and actions: %x\n", my_player->action); 
-    printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 
 void show_dialog(int map, int * lifes){
@@ -199,8 +176,7 @@ void choose_action(player_t * my_player){
         }
     }
     else{
-        printf("[PLAYER] An action is performed: %08x\n", my_player->action);
-        (my_player->action)(my_player, 0); //Execute action
+        (my_player->action)(my_player, 0); //Execute predefined action
     }
 }
 
@@ -225,27 +201,31 @@ int main(int argc, char* argv[]) {
     printf("Name: %s", argv[1]);
     my_player = create_player(my_player, argv[1]);
 
+    // First game starts
     show_dialog(map, &lifes);
     while(victory == -1){
         choose_action(my_player);
-        perform_action(my_player, &map); //performs action and changes map number
+        perform_action(my_player, &map);
         show_dialog(map, &lifes);
 
+        // Victory!
         if(map == goal){
             victory = 1;
             printf("[PLAYER] VICTORY\n");
             if(lifes==3){
-                add_to_hof(my_player, argv[2], argv[3]); //Add middlename to player name and create fullname
+                add_to_hof(my_player, argv[2], argv[3]); 
             }
         }
 
+        //Defeat
         if(lifes == 0){
             printf("[PLAYER] DEFEAT\n");
             victory = 0;
         }
         reset_action(my_player);
     }
-
+    
+    // Possible second game. Won and obtained max score?
     if((victory == 1) && (lifes==3)){
         int restart = 0;
         printf("Do you want to restart the game?\n");
@@ -254,6 +234,7 @@ int main(int argc, char* argv[]) {
         scanf("%d", &restart);
         getchar();
 
+        // Want to play again?
         if(restart == 1){
             victory = -1;
             lifes = 300;
@@ -277,14 +258,16 @@ int main(int argc, char* argv[]) {
                 }
                 fclose(fp);
 
+            // Second game starts
+            show_dialog(map, &lifes);
             while(victory == -1){
+                choose_action(my_player);
+                perform_action(my_player, &map);
                 show_dialog(map, &lifes);
-                choose_action(my_player); //Default action is called is the action has been overflowed and the field is not NULL
-                perform_action(my_player, &map); //performs action and changes map number
 
                 if(map == goal){
                     victory = 1;
-                    printf("Congratulations, HERO!, %s!\n", my_player->fullname);
+                    printf("Congratulations, hero!, %s!\n", my_player->fullname);
                     printf("Game created by: 2022 NUS CS5231 students\n");
                     return 0;
                 }
@@ -299,30 +282,3 @@ int main(int argc, char* argv[]) {
     }
     return 0;
 }
-
-
-/*void show_hof(){ // MODIFY GETLINE, CHECK FIELD MEANING BC ITS NOT CORRECT
-    //Show hall of fame data
-    FILE *fp = fopen("hof.txt", "r");
-    char *line;
-    size_t line_size;
-    int r = 0;
-    
-    //Print hero fullname
-    if (r = getline(line, &line_size, fp) != -1){
-        printf("%s", line);
-    } else{
-        printf("[ERROR] Error showing hero name");
-    }
-    //Print hero max score
-    if (r = getline(&line, &line_size, fp) != -1){
-        printf("%s", line);
-    } else{
-        printf("[ERROR] Error showing hero score");
-    }
-
-    fclose(fp);
-    if(r){
-        free(r);
-    }
-}*/
