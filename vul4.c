@@ -267,14 +267,13 @@ int main(int argc, char* argv[]) {
             unsigned long msize = strtoul(argv[3], &garbage, 10);
             add_to_hof(my_player, argv[2], msize); //Add middlename to player name and create fullname
             printf("HOFFF PPLAYER CURRENT player: %08x\n", my_player);
-            reset_action(my_player);
         }
 
-        if(map == -1){
+        else if(map == -1){
             printf("DEFEAT\n");
             victory = 0;
-            reset_action(my_player);
         }
+        reset_action(my_player);
     }
 
     printf("[INFO] Current player at address: %08x\n", my_player);
@@ -325,9 +324,9 @@ int main(int argc, char* argv[]) {
                 if(map == -1){
                     printf("What a shame! A hero was defeated.\n");
                     victory = -1;
-                    reset_action(my_player);
                     return 0;
                 }
+                reset_action(my_player);
             }
         }
     }
