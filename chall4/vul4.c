@@ -148,7 +148,7 @@ void show_dialog(int map, int * lifes){
             *lifes = *lifes - 3;
             printf("In a swift act, the samurai slit the bandits' throats without a second glance.\n");
             printf("Undoubtedly, evil had taken hold of him. His sword, wielded so far in honor and defense of his lord, had been soiled with the blood of petty thieves.\n");
-            printf("Now, understanding the situation clearly and knowing that his katana had been unsheathed without the late daimyo's orders, he assumed the shame that this unnecessary and dishonorable act entailed. Therefore, he performed the seppuku to put an end to his life but eternity to his honor and loyalty.\n")
+            printf("Now, understanding the situation clearly and knowing that his katana had been unsheathed without the late daimyo's orders, he assumed the shame that this unnecessary and dishonorable act entailed. Therefore, he performed the seppuku to put an end to his life but eternity to his honor and loyalty.\n");
             break;
         case 2:
             *lifes = *lifes - 1;
