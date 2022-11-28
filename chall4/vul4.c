@@ -162,7 +162,6 @@ void show_dialog(int map, int * lifes){
             printf("MAP 3 dialog\n");
             break;
         case 4:
-            *lifes = *lifes - 1;
             printf("MAP 4 dialog\n"); 
             break;
     }
