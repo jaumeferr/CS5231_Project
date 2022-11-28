@@ -182,7 +182,7 @@ void perform_action(player_t * my_player, int * map){
 }
 
 void choose_action(player_t * my_player){
-    int action;
+    int option;
     printf("Choose action: \n");
     printf("1: ACTION_01 \n");
     printf("2: ACTION_02 \n");
@@ -190,9 +190,9 @@ void choose_action(player_t * my_player){
     printf("4: ACTION_04 \n");
 
     if (my_player->action == NULL){
-        scanf("%d", &action);
+        scanf("%d", &option);
         getchar();
-        switch(action){
+        switch(option){
             case 1:
                 my_player->action = action_01;
                 break;
@@ -207,13 +207,13 @@ void choose_action(player_t * my_player){
                 printf("4: ACTION_04 inserted \n");
                 break;
             default:
-                printf("[INFO] DEFAULT ACTION: %d\n", action);
+                printf("[INFO] DEFAULT ACTION: %d\n", option);
                 printf("Please, choose a valid action\n");
         }
     }
     else{
-        printf("[INFO] Action selected: %d\n", action);
-        (my_player->action)(my_player, -1); //Execute action
+        printf("[INFO] Action selected: %08x\n", my_player->action);
+        (my_player->action)(my_player, 0); //Execute action
     }
 }
 
