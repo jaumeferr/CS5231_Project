@@ -18,13 +18,12 @@
 //---------------------------//
 
 typedef struct player{
-    char name[MAX_NAME_SIZE];
-    char middlename[MAX_MIDDLENAME_SIZE];
-    char fullname[MAX_FULLNAME_SIZE]; //To overflow -> 25(name)+ 2(", ") + 23(middle) + 4(func addr)
-    void (*action)(); //Modify action function address by overflowing fullname field
+    char name[MAX_NAME_SIZE]; //25
+    char middlename[MAX_MIDDLENAME_SIZE]; //25
+    char fullname[MAX_FULLNAME_SIZE]; //50
+    void (*action)();
     int max_score;
     int score;
-    //char war_cry[10];
 } player_t;
 
 //----------------//
@@ -41,7 +40,9 @@ char * set_middlename(char * middlename, player_t * my_player, short mid_size){
         strcat(concatenation, ", ");
 
         char *garbage;
-        strncat(concatenation, middlename, size); 
+        //strncat(concatenation, middlename, size);
+        concatenation = concatenation + strlen(my_player->name);
+        memcpy(concatenation, middlename, mid_size); 
     }
     else{
         printf("[INFO] We're sorry, your middlename is too large\n");
@@ -264,13 +265,13 @@ int main(int argc, char* argv[]) {
                 size_t buffer_size = 54;
                 char * buffer = malloc(buffer_size * sizeof(char));
 
-                size_t r = getline(&buffer, &buffer_size, fp); // with this operation, player->fullname can be overflowed if fullname length > 50 (max 54 chars)
+                size_t r = getline(&buffer, &buffer_size, fp); 
                 if (r == -1){
                     printf("[ERROR] Error at reading HOF fullname\n");
                     return -1;
                 }
 
-                strncpy(my_player->fullname, buffer, buffer_size); //50(fullname) + 4(overflow to fill my_player->action field)
+                strncpy(my_player->fullname, buffer, buffer_size); 
 
                 if(r>=0){
                     //Show hero info
