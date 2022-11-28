@@ -132,7 +132,7 @@ void meditate(player_t * my_player, int * map){
     /*char buf[10];
     fgets(buf, sizeof(buf), stdin);
     snprintf(my_player->war_cry, 10, buf);*/
-    printf("[Player] Report situation: %x\n", my_player->action); 
+    printf("[Player] *Meditates* to find meaning in life and actions: %x\n", my_player->action); 
     printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
 
@@ -177,7 +177,7 @@ void choose_action(player_t * my_player){
     printf("1: Run away \n");
     printf("2: Slain the bandits \n");
     printf("3: Negotiate \n");
-    printf("4: meditate \n");
+    printf("4: Meditate \n");
 
     if (my_player->action == NULL){
         scanf("%d", &option);
