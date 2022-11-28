@@ -35,7 +35,7 @@ char * set_middlename(char * middlename, player_t * my_player, short mid_size){
     char * concatenation;
     unsigned short size = mid_size;
 
-    if(m_size < MAX_MIDDLENAME_SIZE){ // mid_size < MAX_MIDDLENAME_SIZE
+    if(mid_size < MAX_MIDDLENAME_SIZE){ // mid_size < MAX_MIDDLENAME_SIZE
         concatenation = malloc(strlen(my_player->name) + size * sizeof(char));
         printf("[INFO] Name to be concatenated: %s -> size: %d\n", my_player->name, strlen(my_player->name));
         printf("[INFO] Middlename to be added: %s -> size: %d\n", middlename, strlen(middlename));
