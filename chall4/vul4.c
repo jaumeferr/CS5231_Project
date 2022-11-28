@@ -37,19 +37,14 @@ char * set_middlename(char * middlename, player_t * my_player, short mid_size){
 
     if(mid_size < MAX_MIDDLENAME_SIZE){ // mid_size < MAX_MIDDLENAME_SIZE
         concatenation = malloc(strlen(my_player->name) + size * sizeof(char));
-        printf("[INFO] Name to be concatenated: %s -> size: %d\n", my_player->name, strlen(my_player->name));
-        printf("[INFO] Middlename to be added: %s -> size: %d\n", middlename, strlen(middlename));
         strncpy(concatenation, my_player->name, strlen(my_player->name));
         strcat(concatenation, ", ");
 
         char *garbage;
-        printf("[INFO] mid_size value is: %i", size);
         strncat(concatenation, middlename, size); 
-        printf("[INFO] mid_size UNSIGNED value is: %ul", size);
-        printf("[INFO] Concatenation is now %s with size %d\n", concatenation, strlen(concatenation));
     }
     else{
-        printf("[INFO] Sorry, your middlename is too large\n");
+        printf("[INFO] We're sorry, your middlename is too large\n");
         concatenation = my_player->name;
     }
     strncpy(my_player->middlename, middlename, MAX_MIDDLENAME_SIZE);
@@ -61,7 +56,7 @@ char * set_middlename(char * middlename, player_t * my_player, short mid_size){
 //-----------------------------------//
 
 void add_to_hof(player_t * my_player, char * middlename, char * mid_size){
-    printf("Congratulations! You have achieved the maximum score, you're a HERO!\n");
+    printf("[PLAYER] Congratulations! You have achieved the maximum score, you're a HERO!\n");
 
     //Remove outdated hof file
     if (remove("hof.txt") == 0) {
@@ -76,7 +71,6 @@ void add_to_hof(player_t * my_player, char * middlename, char * mid_size){
     }
     //New player fullname at char* conc
     char * conc = set_middlename(middlename, my_player, atoi(mid_size)); //Conc length can be > than fullname length if integer overflow is performed
-    printf("Your hero new fullname: %s\n", conc);
     fputs(conc, fp);
     fclose(fp);
 }
@@ -90,7 +84,6 @@ player_t * create_player(player_t * my_player, char * name){
     my_player->action = NULL;
     my_player->max_score = 1717986918; //Force 0x66666666
     my_player->score = 4294967295; // Force 0xFFFFFFFF
-    printf("[INFO] Player struct initialized: %08x\n", my_player);
 
     //printf("[INFO] You have set a new name\n");
     strncpy(my_player->name, name, strlen(name));
@@ -103,16 +96,16 @@ player_t * create_player(player_t * my_player, char * name){
 //          IN-GAME  functions       //
 //-----------------------------------//
 
-void action_01(player_t * my_player, int * map){
-    *map = 6;
+void run_away(player_t * my_player, int * map){
+    *map = 4;
     /*char buf[10];
     scanf("%s", buf);
     snprintf(my_player->war_cry,10,buf);
     printf("%s\n", my_player->war_cry);*/
     printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
-void action_02(player_t * my_player, int * map){
-    *map = 2;
+void slain(player_t * my_player, int * map){
+    *map = 1;
     /*
     char buf[10];
     scanf("%s", buf);
@@ -120,8 +113,8 @@ void action_02(player_t * my_player, int * map){
     printf("%s\n", my_player->war_cry);*/
     printf("[INFO] Action %08x has been performed\n", my_player->action);
 }
-void action_03(player_t * my_player, int * map){
-    *map = 3;
+void negotiate(player_t * my_player, int * map){
+    *map = 2;
     /*
     char buf[10];
     scanf("%s\n", buf);
@@ -134,7 +127,7 @@ void god_mode(player_t * my_player, int * map) {
         system("/bin/sh");
 }
 
-void action_04(player_t * my_player, int * map){
+void meditate(player_t * my_player, int * map){
     *map = 4;
     /*char buf[10];
     fgets(buf, sizeof(buf), stdin);
@@ -147,15 +140,22 @@ void show_dialog(int map, int * lifes){
     printf("Current map: %i\n", map);
     switch(map){
         case 0:
-            printf("MAP 0 dialog\n");
+            printf("The brave ronin, seasoned in the cruelest battles of yesteryear and faithful squire of the royalty, wandered dejectedly through the lush forest in the lands of Matsue after receiving the sad news of the daimyo's death. With nowhere to go, with no one to serve, the brave warrior seemed no more than an inert mirage amidst the liveliness of the forest's fauna and vegetation.\n");
+            printf("To his chagrin, death now seemed to be telling him that his time had come when a pair of bandits approached him by surprise.\n");
+            printf("Once he had observed them carefully, their condition, their posture, any detail that could be appreciated by the sharp tactical and experienced eye of the brave warrior, he could conclude that they were nothing more than poor wretches who had encountered the devil, who now had nothing to lose and nothing to fear.\n");
             break;
         case 1:
-            *lifes = *lifes - 1;
-            printf("MAP 1 dialog\n");
+            *lifes = *lifes - 3;
+            printf("In a swift act, the samurai slit the bandits' throats without a second glance.\n");
+            printf("Undoubtedly, evil had taken hold of him. His sword, wielded so far in honor and defense of his lord, had been soiled with the blood of petty thieves.\n");
+            printf("Now, understanding the situation clearly and knowing that his katana had been unsheathed without the late daimyo's orders, he assumed the shame that this unnecessary and dishonorable act entailed. Therefore, he performed the seppuku to put an end to his life but eternity to his honor and loyalty.\n")
             break;
         case 2:
             *lifes = *lifes - 1;
-            printf("MAP 2 dialog\n");
+            printf("Confident, the samurai approached the criminals to try to agree on a situation that could benefit both.\n");
+            printf("A simple exchange of goods was discussed: his warajiri sandals in exchange for a lock of each opponent's hair.\n");
+            printf("The bandits, enraged at his baldness, struck the samurai's side with a heavy bokken blow.\n");
+
             break;
         case 3:
             *lifes = *lifes - 1;
@@ -165,58 +165,49 @@ void show_dialog(int map, int * lifes){
             *lifes = *lifes - 1;
             printf("MAP 4 dialog\n"); 
             break;
-        case 5:
-            *lifes = *lifes - 1;
-            printf("MAP 5 dialog\n");
-            break;
     }
 }
 
 void perform_action(player_t * my_player, int * map){
-    printf("[INFO] The action is about to be performed: %08x\n", my_player->action);
-    printf("[INFO] The action map is: %d\n", *map);
     (*my_player->action)(my_player, map);
 }
 
 void choose_action(player_t * my_player){
     int option;
     printf("Choose action: \n");
-    printf("1: ACTION_01 \n");
-    printf("2: ACTION_02 \n");
-    printf("3: ACTION_03 \n");
-    printf("4: ACTION_04 \n");
+    printf("1: Run away \n");
+    printf("2: Slain the bandits \n");
+    printf("3: Negotiate \n");
+    printf("4: meditate \n");
 
     if (my_player->action == NULL){
         scanf("%d", &option);
         getchar();
         switch(option){
             case 1:
-                my_player->action = action_01;
+                my_player->action = run_away;
                 break;
             case 2:
-                my_player->action = action_02;
+                my_player->action = slain;
                 break;
             case 3:
-                my_player->action = action_03;
+                my_player->action = negotiate;
                 break;
             case 4:
-                my_player->action = action_04; 
-                printf("4: ACTION_04 inserted \n");
+                my_player->action = meditate; 
                 break;
             default:
-                printf("[INFO] DEFAULT ACTION: %d\n", option);
-                printf("Please, choose a valid action\n");
+                printf("[INFO] Please, choose a valid action\n");
         }
     }
     else{
-        printf("[INFO] Action selected: %08x\n", my_player->action);
+        printf("[PLAYER] An action is performed: %08x\n", my_player->action);
         (my_player->action)(my_player, 0); //Execute action
     }
 }
 
 void reset_action(player_t * my_player){
     my_player->action = NULL;
-    printf("[INFO] Action has been reseted\n");
 }
 
 //-----------------------------------//
@@ -228,7 +219,7 @@ int main(int argc, char* argv[]) {
     int victory = -1;
     int mode = 2;
     int map = 0;
-    int goal = 6;
+    int goal = 4;
     int lifes = 3;
 
     //Player init
@@ -236,29 +227,28 @@ int main(int argc, char* argv[]) {
     printf("Name: %s", argv[1]);
     my_player = create_player(my_player, argv[1]);
 
+    show_dialog(map, &lifes);
     while(victory == -1){
-        show_dialog(map, &lifes);
         choose_action(my_player);
         perform_action(my_player, &map); //performs action and changes map number
+        show_dialog(map, &lifes);
 
         if(map == goal){
             victory = 1;
-            printf("VICTORY\n");
-            printf("BEFORE HOFF PPLAYER CURRENT player: %08x\n", my_player);
-            add_to_hof(my_player, argv[2], argv[3]); //Add middlename to player name and create fullname
-            printf("HOFFF PPLAYER CURRENT player: %08x\n", my_player);
+            printf("[PLAYER] VICTORY\n");
+            if(lifes==3){
+                add_to_hof(my_player, argv[2], argv[3]); //Add middlename to player name and create fullname
+            }
         }
 
         if(lifes == 0){
-            printf("DEFEAT\n");
+            printf("[PLAYER] DEFEAT\n");
             victory = 0;
         }
         reset_action(my_player);
     }
 
-    printf("[INFO] Current player at address: %08x\n", my_player);
-
-    if(victory == 1){
+    if((victory == 1) && (lifes==3)){
         int restart = 0;
         printf("Do you want to restart the game?\n");
         printf("1- Yes\n");
@@ -277,15 +267,15 @@ int main(int argc, char* argv[]) {
 
                 size_t r = getline(&buffer, &buffer_size, fp); // with this operation, player->fullname can be overflowed if fullname length > 50 (max 54 chars)
                 if (r == -1){
-                    printf("[INFO] Error while reading HOF fullname\n");
-                } else{
-                    printf("[INFO] Hero name OK\n");
+                    printf("[ERROR] Error at reading HOF fullname\n");
+                    return -1;
                 }
+
                 strncpy(my_player->fullname, buffer, buffer_size); //50(fullname) + 4(overflow to fill my_player->action field)
 
                 if(r>=0){
                     //Show hero info
-                    printf("[INFO] Hero fullname: %s\n", my_player->fullname);
+                    printf("[PLAYER] Hero fullname: %s\n", my_player->fullname);
                 }
                 fclose(fp);
 
@@ -296,7 +286,7 @@ int main(int argc, char* argv[]) {
 
                 if(map == goal){
                     victory = 1;
-                    printf("CONGRATULATIONS!, %s!\n", my_player->fullname);
+                    printf("Congratulations, HERO!, %s!\n", my_player->fullname);
                     printf("Game created by: 2022 NUS CS5231 students\n");
                     return 0;
                 }
@@ -309,7 +299,6 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-    printf("[INFO] Exit");
     return 0;
 }
 
