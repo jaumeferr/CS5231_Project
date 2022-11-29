@@ -1,5 +1,0 @@
-Command:  steghide -extract -sf map.jpeg
-
-Password: Lionturtle
-
-Secret text: CS5231_F1n4l_Pr0j3ct
