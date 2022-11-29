@@ -129,16 +129,19 @@ void show_dialog(int map, int * lifes){
         case 2:
             *lifes = *lifes - 1;
             printf("Confident, the samurai approached the criminals to try to agree on a situation that could benefit both.\n");
-            printf("A simple exchange of goods was discussed: his warajiri sandals in exchange for a lock of each opponent's hair.\n");
+            printf("A simple exchange of goods was discussed: his waraji sandals in exchange for a lock of each opponent's hair.\n");
             printf("The bandits, enraged at his baldness, struck the samurai's side with a heavy bokken blow.\n");
 
             break;
         case 3:
             *lifes = *lifes - 1;
-            printf("MAP 3 dialog\n");
+            printf("The brave warrior, ignoring the spotaneous situation he was involved into, sit and focus on deep thought and self contemplation. He was so concetrated and immersed by the unique the breath style of zazen that that could not even notice about the sharp rock that the bandit had thrown.\n");
+            printf("The consequences of a direct impact to his skull may have been awful. Fortunately, the imprecise throw barely hit his shoulder. Despite it was enough to open bloody wound, the samurai could react fast enough to stop the second rock, which would have reached directly his forehead.\n");
+            printf("It was no time for meditation, nor would it be wise to underestimate the forcefulness of those adversaries.\n");
             break;
         case 4:
-            printf("MAP 4 dialog\n"); 
+            printf("Just as the best doctor is not the one who cures wounds but the one who foresees them, the good warrior will avoid unnecessary encounters that can have devastating consequences. It was not a matter of victory or defeat, but of honor. His sword, his spirit and weapon that had faithfully served his lord and protected the region, would not be soiled with the blood of those despicable enemies.\n");
+            printf("Miyamoto's hero, he was called until now by the people: his fierceness, his loyalty, his discipline and courage that until now had assigned him that nickname were now the best guide on his new path, the path of the sword.\n");
             break;
     }
 }
